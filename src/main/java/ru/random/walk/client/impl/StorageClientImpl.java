@@ -7,6 +7,10 @@ import ru.random.walk.client.StorageClient;
 import ru.random.walk.config.StorageProperties;
 
 import java.io.File;
+import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 
 @Slf4j
 @AllArgsConstructor
@@ -15,35 +19,31 @@ public class StorageClientImpl implements StorageClient {
     private final StorageProperties properties;
 
     @Override
-    public String uploadAndGetUrl(File file, String key) {
-        return "";
+    public URL uploadAndGetUrl(File file, String key) {
+        var bucketName = properties.bucketName();
+        var keyObjectPath = getKeyObjectPath(key);
+        s3Client.putObject(bucketName, keyObjectPath, file);
+        return getUrl(key);
     }
 
     @Override
-    public File get(String key) {
-        return null;
+    public URL getUrl(String key) {
+        var bucketName = properties.bucketName();
+        var expiration = getExpiration();
+        var keyObjectPath = getKeyObjectPath(key);
+        return s3Client.generatePresignedUrl(bucketName, keyObjectPath, expiration);
     }
 
-//    @PostConstruct
-//    private void send() {
-//        File file = new File("my.png");
-//        if (!FileUtil.isImage(file)) {
-//            log.info("File is not image!");
-//            return;
-//        }
-//        StringBuilder content = new StringBuilder();
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                content.append(line);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        log.info("File = [{}]", content);
-//        s3Client.putObject(properties.bucketName(), "maks", file);
-//        var expirationDate = Date.from(now().plusMinutes(1).atZone(ZoneOffset.systemDefault()).toInstant());
-//        var url = s3Client.generatePresignedUrl(properties.bucketName(), "maks", expirationDate);
-//        log.info("Url = {}", url);
-//    }
+    private String getKeyObjectPath(String key) {
+        return "%s/%s".formatted(
+                properties.servicePath().toLowerCase(),
+                key
+        );
+    }
+
+    private Date getExpiration() {
+        Instant now = Instant.now();
+        Duration ttl = Duration.ofMinutes(properties.temporaryUrlTtlInMinutes());
+        return Date.from(now.plus(ttl));
+    }
 }

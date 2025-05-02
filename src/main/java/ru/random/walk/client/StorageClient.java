@@ -1,9 +1,10 @@
 package ru.random.walk.client;
 
 import java.io.File;
+import java.net.URL;
 
 public interface StorageClient {
-    String uploadAndGetUrl(File file, String key);
+    URL uploadAndGetUrl(File file, String key);
 
-    File get(String key);
+    URL getUrl(String key);
 }

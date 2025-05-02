@@ -3,15 +3,13 @@ package ru.random.walk.client.impl;
 import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import ru.random.walk.client.StorageClient;
 import ru.random.walk.config.StorageProperties;
 
 import java.io.File;
 
-@Service
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
 public class StorageClientImpl implements StorageClient {
     private final AmazonS3Client s3Client;
     private final StorageProperties properties;

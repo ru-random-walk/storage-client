@@ -12,7 +12,6 @@ on:
   push:
     branches:
       - master
-      - RANDOMWALK-196-add-storage-client
 jobs:
   publish:
     runs-on: ubuntu-latest

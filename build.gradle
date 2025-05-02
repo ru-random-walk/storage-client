@@ -25,6 +25,10 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk:1.12.782'
 }
 
+bootJar {
+    enabled = false
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

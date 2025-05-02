@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.random.walk'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/ru-random-walk/event-exchange-contract"
+            credentials {
+                username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+javadoc {
+    destinationDir = file("${buildDir}/docs/javadoc")
+}

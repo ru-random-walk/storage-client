@@ -22,7 +22,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:'
     implementation 'com.amazonaws:aws-java-sdk:1.12.782'
 }
 

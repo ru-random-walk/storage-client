@@ -2,14 +2,29 @@ package ru.random.walk.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.UUID;
 
 public class FileUtil {
+    private static final String TEMP_FOLDER = "temp";
+
+    public static boolean isImage(String base64) {
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64);
+            ByteArrayInputStream bytes = new ByteArrayInputStream(imageBytes);
+            BufferedImage image = ImageIO.read(bytes);
+            return Objects.nonNull(image);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public static boolean isImage(File file) {
         try {
             BufferedImage image = ImageIO.read(file);
@@ -27,12 +42,20 @@ public class FileUtil {
         }
     }
 
-    public static File getFileFromBase64(String base64, String outputFilePath) throws IOException {
+    public static File getFileFromBase64(String base64) throws IOException {
         byte[] fileContent = Base64.getDecoder().decode(base64);
-        File file = new File(outputFilePath);
+        createTempFolderIfNotExists();
+        File file = new File(TEMP_FOLDER + File.separator + UUID.randomUUID());
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(fileContent);
         }
         return file;
+    }
+
+    private static void createTempFolderIfNotExists() throws IOException {
+        File tempDir = new File(TEMP_FOLDER);
+        if (!tempDir.exists() && !tempDir.mkdirs()) {
+            throw new IOException("Failed to create temporary directory: " + TEMP_FOLDER);
+        }
     }
 }

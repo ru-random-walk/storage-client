@@ -31,7 +31,6 @@ storage:
 ```
 - Mock `StorageClient` client in base test class or for all tests that up whole spring context
 ```java
-@SuppressWarnings("resource")
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractContainerTest {

@@ -1,0 +1,29 @@
+package ru.random.walk.util;
+
+import com.google.common.util.concurrent.RateLimiter;
+import lombok.RequiredArgsConstructor;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+@RequiredArgsConstructor
+public class KeyRateLimiter<K extends Comparable<K>> {
+    private final Map<K, RateLimiter> keyToRateLimiter = new ConcurrentHashMap<>();
+    private final Duration period;
+
+    public boolean limitExceeded(K key) {
+        return !keyToRateLimiter.computeIfAbsent(key, this::createNewLimiter)
+                .tryAcquire();
+    }
+
+    public void throwIfRateLimitExceeded(K key, RuntimeException exception) {
+        if (limitExceeded(key)) {
+            throw exception;
+        }
+    }
+
+    private RateLimiter createNewLimiter(K k) {
+        return RateLimiter.create((double) 1 / period.getSeconds());
+    }
+}

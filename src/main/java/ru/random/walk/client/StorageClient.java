@@ -42,7 +42,7 @@ public interface StorageClient {
         return getUrl("%s.%s".formatted(keysPath, extension.name().toLowerCase()));
     }
 
-    default String getPngUrl(String key, Map<String, UUID> keysPathMap) {
+    default String getPngUrl(Map<String, UUID> keysPathMap) {
         return getUrl(
                 keysPathMap.entrySet().stream()
                         .collect(Collectors.toMap(

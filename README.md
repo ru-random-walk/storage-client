@@ -31,14 +31,30 @@ storage:
 ```
 - Mock `StorageClient` client in base test class or for all tests that up whole spring context
 ```java
+package ru.random.walk.club_service;
+
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import ru.random.walk.client.StorageClient;
+
+import static org.mockito.Mockito.mock;
+
+@TestConfiguration
+public class TestContextConfiguration {
+    @Bean
+    @Primary
+    public StorageClient storageClient() {
+        return mock(StorageClient.class);
+    }
+}
+```
+- And Import test context configuration
+```java
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(TestContextConfiguration.class)
 public abstract class AbstractContainerTest {
-    private static final PostgreSQLContainer<?> DATABASE_CONTAINER;
-    private static final KafkaContainer KAFKA_CONTAINER;
-
-    @MockitoBean
-    private StorageClient storageClient;
 //    ...
 }
 ```

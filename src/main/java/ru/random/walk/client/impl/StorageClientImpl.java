@@ -1,13 +1,13 @@
 package ru.random.walk.client.impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.random.walk.client.StorageClient;
 import ru.random.walk.config.StorageProperties;
 
-import java.io.File;
-import java.net.URL;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -19,19 +19,19 @@ public class StorageClientImpl implements StorageClient {
     private final StorageProperties properties;
 
     @Override
-    public URL uploadAndGetUrl(File file, String key) {
+    public String uploadAndGetUrl(InputStream input, ObjectMetadata metadata, String key) {
         var bucketName = properties.bucketName();
         var keyObjectPath = getKeyObjectPath(key);
-        s3Client.putObject(bucketName, keyObjectPath, file);
+        s3Client.putObject(bucketName, keyObjectPath, input, metadata);
         return getUrl(key);
     }
 
     @Override
-    public URL getUrl(String key) {
+    public String getUrl(String key) {
         var bucketName = properties.bucketName();
         var expiration = getExpiration();
         var keyObjectPath = getKeyObjectPath(key);
-        return s3Client.generatePresignedUrl(bucketName, keyObjectPath, expiration);
+        return s3Client.generatePresignedUrl(bucketName, keyObjectPath, expiration).toString();
     }
 
     private String getKeyObjectPath(String key) {

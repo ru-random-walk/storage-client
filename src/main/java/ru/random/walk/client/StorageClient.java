@@ -9,10 +9,32 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public interface StorageClient {
+    /**
+     * Upload input stream file with raw metadata and explicit key
+     *
+     * @param input    input file stream
+     * @param metadata raw file metadata that can be saved in storage
+     * @param key      path to the file in the storage
+     * @return temporary url for input file
+     */
     String uploadAndGetUrl(InputStream input, ObjectMetadata metadata, String key);
 
+    /**
+     * Get temporary url for uploaded file by raw explicit key
+     *
+     * @param key path to the file in the storage
+     * @return temporary url for input file
+     */
     String getUrl(String key);
 
+    /**
+     * Upload and get temporary url for downloading file
+     *
+     * @param input       input file stream
+     * @param keysPathMap all traversal folders path that can be executed in finite storage path
+     * @param extension   kind of file that can be executed in finite storage path
+     * @return temporary url for input file
+     */
     default String uploadAndGetUrl(InputStream input, Map<String, String> keysPathMap, FileExtension extension) {
         var keysPath = keysPathMap.entrySet().stream()
                 .map(entry -> "%s/%s".formatted(entry.getKey(), entry.getValue()))
@@ -22,6 +44,13 @@ public interface StorageClient {
         return uploadAndGetUrl(input, extension.getMetadata(), key);
     }
 
+    /**
+     * Upload png file from input stream with traversal keysPathMap
+     *
+     * @param input       input file stream
+     * @param keysPathMap all traversal folders path that can be executed in finite storage path
+     * @return temporary url for input file
+     */
     default String uploadPngAndGetUrl(InputStream input, Map<String, UUID> keysPathMap) {
         return uploadAndGetUrl(
                 input,
@@ -34,6 +63,13 @@ public interface StorageClient {
         );
     }
 
+    /**
+     * Get temporary url for uploaded file by keysPathMap and extension
+     *
+     * @param keysPathMap all traversal folders path that can be executed in finite storage path
+     * @param extension   kind of file that can be executed in finite storage path
+     * @return temporary url for input file
+     */
     default String getUrl(Map<String, String> keysPathMap, FileExtension extension) {
         var keysPath = keysPathMap.entrySet().stream()
                 .map(entry -> "%s/%s".formatted(entry.getKey(), entry.getValue()))
@@ -42,6 +78,12 @@ public interface StorageClient {
         return getUrl("%s.%s".formatted(keysPath, extension.name().toLowerCase()));
     }
 
+    /**
+     * Get temporary url for uploaded png file by keysPathMap
+     *
+     * @param keysPathMap all traversal folders path that can be executed in finite storage path
+     * @return temporary url for input file
+     */
     default String getPngUrl(Map<String, UUID> keysPathMap) {
         return getUrl(
                 keysPathMap.entrySet().stream()

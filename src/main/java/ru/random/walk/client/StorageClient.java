@@ -28,6 +28,20 @@ public interface StorageClient {
     String getUrl(String key);
 
     /**
+     * Check file existence
+     * @param key path to the file in the storage
+     * @return true if file exists, otherwise returns false
+     */
+    boolean doesFileExist(String key);
+
+    /**
+     * Deletes file from storage
+     *
+     * @param key path to the file in the storage
+     */
+    void deleteFile(String key);
+
+    /**
      * Upload and get temporary url for downloading file
      *
      * @param input       input file stream

@@ -34,6 +34,16 @@ public class StorageClientImpl implements StorageClient {
         return s3Client.generatePresignedUrl(bucketName, keyObjectPath, expiration).toString();
     }
 
+    @Override
+    public boolean doesFileExist(String key) {
+        return s3Client.doesObjectExist(properties.bucketName(), key);
+    }
+
+    @Override
+    public void deleteFile(String key) {
+        s3Client.deleteObject(properties.bucketName(), key);
+    }
+
     private String getKeyObjectPath(String key) {
         return "%s/%s".formatted(
                 properties.servicePath().toLowerCase(),

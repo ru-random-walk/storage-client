@@ -3,29 +3,19 @@ package ru.random.walk;
 import ru.random.walk.client.StorageClient;
 import ru.random.walk.config.StorageAutoConfiguration;
 import ru.random.walk.config.StorageProperties;
-import ru.random.walk.model.FileType;
 import ru.random.walk.util.PathBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 public class MainExample {
     public static void main(String[] args) throws IOException {
         var storageClient = initStorageClient();
-        File file = new File("pic.jpg");
-        try (var fileInputStream = new FileInputStream(file)) {
-            var url = storageClient.uploadAndGetUrl(
-                    fileInputStream,
-                    PathBuilder.init()
-                            .add("Some pom")
-                            .add(PathBuilder.Key.CLUB_ID, UUID.randomUUID())
-                            .build(),
-                    FileType.JPG
-            );
-            System.out.printf("Url = %s\n", url);
-        }
+        storageClient.delete(
+                PathBuilder.init()
+                        .add("Some pom")
+                        .add(PathBuilder.Key.CLUB_ID, "50158648-5320-4769-aa82-7c7677533db9")
+                        .build()
+        );
     }
 
     private static StorageClient initStorageClient() {

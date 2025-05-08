@@ -22,44 +22,44 @@ public class StorageClientImpl implements StorageClient {
     private final Duration temporaryUrlTtl;
 
     @Override
-    public String uploadAndGetUrl(File input, String explicitKey) {
-        var fileKey = getFileKey(explicitKey);
+    public String uploadAndGetUrl(File input, String key) {
+        var fileKey = getFileKey(key);
         s3Client.putObject(bucketName, fileKey, input);
-        return getUrl(explicitKey);
+        return getUrl(key);
     }
 
     @Override
-    public String uploadAndGetUrl(InputStream input, String explicitKey) {
-        var fileKey = getFileKey(explicitKey);
+    public String uploadAndGetUrl(InputStream input, String key) {
+        var fileKey = getFileKey(key);
         var emptyMetadata = new ObjectMetadata();
         s3Client.putObject(bucketName, fileKey, input, emptyMetadata);
-        return getUrl(explicitKey);
+        return getUrl(key);
     }
 
     @Override
-    public String uploadAndGetUrl(InputStream input, String explicitKey, FileType fileType) {
-        var fileKey = getFileKey(explicitKey);
+    public String uploadAndGetUrl(InputStream input, String key, FileType fileType) {
+        var fileKey = getFileKey(key);
         var metadata = fileType.getMetadata();
         s3Client.putObject(bucketName, fileKey, input, metadata);
-        return getUrl(explicitKey);
+        return getUrl(key);
     }
 
     @Override
-    public String getUrl(String explicitKey) {
-        var fileKey = getFileKey(explicitKey);
+    public String getUrl(String key) {
+        var fileKey = getFileKey(key);
         Date expiration = Date.from(Instant.now().plus(temporaryUrlTtl));
         return s3Client.generatePresignedUrl(bucketName, fileKey, expiration).toString();
     }
 
     @Override
-    public void delete(String explicitKey) {
-        var fileKey = getFileKey(explicitKey);
+    public void delete(String key) {
+        var fileKey = getFileKey(key);
         s3Client.deleteObject(bucketName, fileKey);
     }
 
     @Override
-    public boolean exist(String explicitKey) {
-        var fileKey = getFileKey(explicitKey);
+    public boolean exist(String key) {
+        var fileKey = getFileKey(key);
         return s3Client.doesObjectExist(bucketName, fileKey);
     }
 

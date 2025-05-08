@@ -1,23 +1,34 @@
 package ru.random.walk.client;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import ru.random.walk.model.FileExtension;
+import ru.random.walk.model.FileType;
 
+import java.io.File;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public interface StorageClient {
     /**
-     * Upload input stream file with raw metadata and explicit key
+     * Upload input stream file with explicit key
      *
-     * @param input    input file stream
-     * @param metadata raw file metadata that can be saved in storage
-     * @param key      path to the file in the storage
+     * @param key path to the file in the storage
      * @return temporary url for input file
      */
-    String uploadAndGetUrl(InputStream input, ObjectMetadata metadata, String key);
+    String uploadAndGetUrl(File input, String key);
+
+    /**
+     * Upload input stream file with explicit key
+     *
+     * @param key path to the file in the storage
+     * @return temporary url for input file
+     */
+    String uploadAndGetUrl(InputStream input, String key);
+
+    /**
+     * Upload input stream file with type and explicit key
+     *
+     * @param key path to the file in the storage
+     * @return temporary url for input file
+     */
+    String uploadAndGetUrl(InputStream input, String key, FileType fileType);
 
     /**
      * Get temporary url for uploaded file by raw explicit key
@@ -28,70 +39,16 @@ public interface StorageClient {
     String getUrl(String key);
 
     /**
-     * Upload and get temporary url for downloading file
+     * Delete file from storage by key
      *
-     * @param input       input file stream
-     * @param keysPathMap all traversal folders path that can be executed in finite storage path
-     * @param extension   kind of file that can be executed in finite storage path
-     * @return temporary url for input file
+     * @param key path to the file in the storage
      */
-    default String uploadAndGetUrl(InputStream input, Map<String, String> keysPathMap, FileExtension extension) {
-        var keysPath = keysPathMap.entrySet().stream()
-                .map(entry -> "%s/%s".formatted(entry.getKey(), entry.getValue()))
-                .reduce("%s/%s"::formatted)
-                .orElseThrow(() -> new IllegalArgumentException("keysPathMap size must be greater or equals 1!"));
-        var key = "%s.%s".formatted(keysPath, extension.name().toLowerCase());
-        return uploadAndGetUrl(input, extension.getMetadata(), key);
-    }
+    void delete(String key);
 
     /**
-     * Upload png file from input stream with traversal keysPathMap
+     * Check for existing file in storage by key
      *
-     * @param input       input file stream
-     * @param keysPathMap all traversal folders path that can be executed in finite storage path
-     * @return temporary url for input file
+     * @param key path to the file in the storage
      */
-    default String uploadPngAndGetUrl(InputStream input, Map<String, UUID> keysPathMap) {
-        return uploadAndGetUrl(
-                input,
-                keysPathMap.entrySet().stream()
-                        .collect(Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> entry.getValue().toString()
-                        )),
-                FileExtension.PNG
-        );
-    }
-
-    /**
-     * Get temporary url for uploaded file by keysPathMap and extension
-     *
-     * @param keysPathMap all traversal folders path that can be executed in finite storage path
-     * @param extension   kind of file that can be executed in finite storage path
-     * @return temporary url for input file
-     */
-    default String getUrl(Map<String, String> keysPathMap, FileExtension extension) {
-        var keysPath = keysPathMap.entrySet().stream()
-                .map(entry -> "%s/%s".formatted(entry.getKey(), entry.getValue()))
-                .reduce("%s/%s"::formatted)
-                .orElseThrow(() -> new IllegalArgumentException("keysPathMap size must be greater or equals 1!"));
-        return getUrl("%s.%s".formatted(keysPath, extension.name().toLowerCase()));
-    }
-
-    /**
-     * Get temporary url for uploaded png file by keysPathMap
-     *
-     * @param keysPathMap all traversal folders path that can be executed in finite storage path
-     * @return temporary url for input file
-     */
-    default String getPngUrl(Map<String, UUID> keysPathMap) {
-        return getUrl(
-                keysPathMap.entrySet().stream()
-                        .collect(Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> entry.getValue().toString()
-                        )),
-                FileExtension.PNG
-        );
-    }
+    boolean exist(String key);
 }

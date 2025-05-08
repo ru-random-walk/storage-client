@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @RequiredArgsConstructor
 public class KeyRateLimiter<K extends Comparable<K>> {
@@ -17,9 +18,9 @@ public class KeyRateLimiter<K extends Comparable<K>> {
                 .tryAcquire();
     }
 
-    public void throwIfRateLimitExceeded(K key, RuntimeException exception) {
+    public void throwIfRateLimitExceeded(K key, Supplier<RuntimeException> exceptionSupplier) {
         if (limitExceeded(key)) {
-            throw exception;
+            exceptionSupplier.get();
         }
     }
 

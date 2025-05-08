@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import ru.random.walk.client.StorageClient;
 import ru.random.walk.client.impl.StorageClientImpl;
 
+import java.time.Duration;
+
 @AutoConfiguration
 @EnableConfigurationProperties(StorageProperties.class)
 public class StorageAutoConfiguration {
@@ -31,6 +33,7 @@ public class StorageAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(StorageClient.class)
     public StorageClient storageClient(AmazonS3Client s3Client, StorageProperties properties) {
-        return new StorageClientImpl(s3Client, properties);
+        Duration temporaryUrlTtl = Duration.ofMinutes(properties.temporaryUrlTtlInMinutes());
+        return new StorageClientImpl(s3Client, properties.bucketName(), properties.servicePath(), temporaryUrlTtl);
     }
 }

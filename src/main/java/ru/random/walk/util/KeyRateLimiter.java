@@ -18,9 +18,9 @@ public class KeyRateLimiter<K extends Comparable<K>> {
                 .tryAcquire();
     }
 
-    public void throwIfRateLimitExceeded(K key, Supplier<RuntimeException> exception) {
+    public void throwIfRateLimitExceeded(K key, Supplier<RuntimeException> exceptionSupplier) {
         if (limitExceeded(key)) {
-            exception.get();
+            exceptionSupplier.get();
         }
     }
 

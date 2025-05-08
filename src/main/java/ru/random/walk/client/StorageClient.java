@@ -9,46 +9,46 @@ public interface StorageClient {
     /**
      * Upload input stream file with explicit key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      * @return temporary url for input file
      */
-    String uploadAndGetUrl(File input, String explicitKey);
+    String uploadAndGetUrl(File input, String key);
 
     /**
      * Upload input stream file with explicit key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      * @return temporary url for input file
      */
-    String uploadAndGetUrl(InputStream input, String explicitKey);
+    String uploadAndGetUrl(InputStream input, String key);
 
     /**
      * Upload input stream file with type and explicit key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      * @return temporary url for input file
      */
-    String uploadAndGetUrl(InputStream input, String explicitKey, FileType fileType);
+    String uploadAndGetUrl(InputStream input, String key, FileType fileType);
 
     /**
      * Get temporary url for uploaded file by raw explicit key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      * @return temporary url for input file
      */
-    String getUrl(String explicitKey);
+    String getUrl(String key);
 
     /**
-     * Delete file from storage by explicitKey
+     * Delete file from storage by key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      */
-    void delete(String explicitKey);
+    void delete(String key);
 
     /**
-     * Check for existing file in storage by explicitKey
+     * Check for existing file in storage by key
      *
-     * @param explicitKey path to the file in the storage
+     * @param key path to the file in the storage
      */
-    boolean exist(String explicitKey);
+    boolean exist(String key);
 }

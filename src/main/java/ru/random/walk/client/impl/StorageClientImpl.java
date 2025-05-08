@@ -23,14 +23,14 @@ public class StorageClientImpl implements StorageClient {
 
     @Override
     public String uploadAndGetUrl(File input, String key) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         s3Client.putObject(bucketName, fileKey, input);
         return getUrl(key);
     }
 
     @Override
     public String uploadAndGetUrl(InputStream input, String key) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         var emptyMetadata = new ObjectMetadata();
         s3Client.putObject(bucketName, fileKey, input, emptyMetadata);
         return getUrl(key);
@@ -38,7 +38,7 @@ public class StorageClientImpl implements StorageClient {
 
     @Override
     public String uploadAndGetUrl(InputStream input, String key, FileType fileType) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         var metadata = fileType.getMetadata();
         s3Client.putObject(bucketName, fileKey, input, metadata);
         return getUrl(key);
@@ -46,24 +46,24 @@ public class StorageClientImpl implements StorageClient {
 
     @Override
     public String getUrl(String key) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         Date expiration = Date.from(Instant.now().plus(temporaryUrlTtl));
         return s3Client.generatePresignedUrl(bucketName, fileKey, expiration).toString();
     }
 
     @Override
     public void delete(String key) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         s3Client.deleteObject(bucketName, fileKey);
     }
 
     @Override
     public boolean exist(String key) {
-        var fileKey = getFileKey(key);
+        var fileKey = getFileServiceKey(key);
         return s3Client.doesObjectExist(bucketName, fileKey);
     }
 
-    private String getFileKey(String key) {
+    private String getFileServiceKey(String key) {
         return "%s/%s".formatted(servicePath, key);
     }
 }

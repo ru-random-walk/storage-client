@@ -20,7 +20,7 @@ public class KeyRateLimiter<K extends Comparable<K>> {
 
     public void throwIfRateLimitExceeded(K key, Supplier<RuntimeException> exceptionSupplier) {
         if (limitExceeded(key)) {
-            exceptionSupplier.get();
+            throw exceptionSupplier.get();
         }
     }
 
